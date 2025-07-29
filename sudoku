@@ -1,0 +1,83 @@
+import java.util.Scanner;
+
+public class Sudoku {
+    private static int[][] board = {
+        {5, 3, 0, 0, 7, 0, 0, 0, 0},
+        {6, 0, 0, 1, 9, 5, 0, 0, 0},
+        {0, 9, 8, 0, 0, 0, 0, 6, 0},
+        {8, 0, 0, 0, 6, 0, 0, 0, 3},
+        {4, 0, 0, 8, 0, 3, 0, 0, 1},
+        {7, 0, 0, 0, 2, 0, 0, 0, 6},
+        {0, 6, 0, 0, 0, 0, 2, 8, 0},
+        {0, 0, 0, 4, 1, 9, 0, 0, 5},
+        {0, 0, 0, 0, 8, 0, 0, 7, 9}
+    };
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            printBoard();
+            System.out.println("Enter row (0-8), col (0-8), and value (1-9), or -1 to exit:");
+            int row = scanner.nextInt();
+            if (row == -1) break;
+            int col = scanner.nextInt();
+            int val = scanner.nextInt();
+
+            if (isValidMove(row, col, val)) {
+                board[row][col] = val;
+            } else {
+                System.out.println("❌ Invalid move!");
+            }
+
+            if (isSolved()) {
+                printBoard();
+                System.out.println("🎉 Congratulations! You solved the puzzle!");
+                break;
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static void printBoard() {
+        System.out.println("\n+-------+-------+-------+");
+        for (int i = 0; i < 9; i++) {
+            System.out.print("| ");
+            for (int j = 0; j < 9; j++) {
+                System.out.print((board[i][j] == 0 ? "." : board[i][j]) + " ");
+                if ((j + 1) % 3 == 0) System.out.print("| ");
+            }
+            System.out.println();
+            if ((i + 1) % 3 == 0) System.out.println("+-------+-------+-------+");
+        }
+    }
+
+    private static boolean isValidMove(int row, int col, int val) {
+        if (board[row][col] != 0) return false;
+
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == val || board[i][col] == val) return false;
+        }
+
+        int boxRow = (row / 3) * 3;
+        int boxCol = (col / 3) * 3;
+
+        for (int i = boxRow; i < boxRow + 3; i++) {
+            for (int j = boxCol; j < boxCol + 3; j++) {
+                if (board[i][j] == val) return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static boolean isSolved() {
+        for (int[] row : board) {
+            for (int val : row) {
+                if (val == 0) return false;
+            }
+        }
+        return true;
+    }
+}
